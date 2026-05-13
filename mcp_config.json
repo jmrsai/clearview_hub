@@ -1,0 +1,25 @@
+{
+  "mcpServers": {
+    "flutter": {
+      "command": "dart",
+      "args": [
+        "mcp-server"
+      ]
+    },
+    "stitch": {
+      "command": "npx",
+      "args": [
+        "@google/stitch-mcp-server"
+      ],
+      "env": {
+        "STITCH_API_KEY": ""
+      }
+    },
+    "firebase": {
+      "command": "npx",
+      "args": [
+        "firebase-mcp-server"
+      ]
+    }
+  }
+}

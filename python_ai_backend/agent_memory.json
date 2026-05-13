@@ -1,0 +1,17 @@
+{
+    "cases": [
+        {
+            "id": 1778650863,
+            "symptoms": "Patient has blurry vision and red bump on eyelid",
+            "diagnosis": "ROUTINE: Monitor and schedule standard clinical checkup.",
+            "timestamp": 1778650863.524058
+        },
+        {
+            "id": 1778650880,
+            "symptoms": "Patient reports sudden blindness and chest pain",
+            "diagnosis": "EMERGENCY: Immediate Multi-Specialty Clinical Intervention Required",
+            "timestamp": 1778650880.9580457
+        }
+    ],
+    "agent_consensus_history": []
+}
