@@ -102,6 +102,7 @@ import 'package:clearview_hub/core/compliance/presentation/screens/medical_conse
 import 'package:clearview_hub/features/wellness_core/presentation/screens/clinical_report_screen.dart';
 import 'package:clearview_hub/features/wellness_core/presentation/screens/medication_tracker_screen.dart';
 import 'package:clearview_hub/features/vision_safety/presentation/screens/surface_eye_scan_screen.dart';
+import 'package:clearview_hub/features/wellness_core/presentation/screens/global_quantum_network_screen.dart';
 
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
@@ -247,6 +248,11 @@ final routerProvider = Provider<GoRouter>((ref) {
                 path: 'leaderboard',
                 name: 'leaderboard',
                 builder: (context, state) => const LeaderboardScreen(),
+              ),
+              GoRoute(
+                path: 'global_quantum_network',
+                name: 'global_quantum_network',
+                builder: (context, state) => const GlobalQuantumNetworkScreen(),
               ),
               GoRoute(
                 path: 'chat',
