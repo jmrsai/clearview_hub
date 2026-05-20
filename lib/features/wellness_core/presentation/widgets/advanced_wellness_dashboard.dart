@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:battery_plus/battery_plus.dart';
 import '../../../../widgets/glass_card.dart';
+import '../../../../ai_engine/domain/global_wellness_engine.dart';
+import '../../../../sensors/domain/sensor_orchestrator.dart';
 
-class AdvancedWellnessDashboard extends StatefulWidget {
+class AdvancedWellnessDashboard extends ConsumerStatefulWidget {
   const AdvancedWellnessDashboard({super.key});
 
   @override
-  State<AdvancedWellnessDashboard> createState() =>
+  ConsumerState<AdvancedWellnessDashboard> createState() =>
       _AdvancedWellnessDashboardState();
 }
 
-class _AdvancedWellnessDashboardState extends State<AdvancedWellnessDashboard> {
+class _AdvancedWellnessDashboardState extends ConsumerState<AdvancedWellnessDashboard> {
   final Battery _battery = Battery();
   int _batteryLevel = 0;
 
@@ -29,12 +32,14 @@ class _AdvancedWellnessDashboardState extends State<AdvancedWellnessDashboard> {
 
   @override
   Widget build(BuildContext context) {
+    final wellnessState = ref.watch(globalWellnessEngineProvider);
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildGlobalWellnessScore(),
+          _buildGlobalWellnessScore(wellnessState),
           const SizedBox(height: 24),
           _buildSensorStatusRow(),
           const SizedBox(height: 24),
@@ -43,7 +48,7 @@ class _AdvancedWellnessDashboardState extends State<AdvancedWellnessDashboard> {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
-          _buildLiveMetricsGrid(),
+          _buildLiveMetricsGrid(wellnessState),
           const SizedBox(height: 24),
           _buildDailyActivityChart(),
         ],
@@ -51,7 +56,7 @@ class _AdvancedWellnessDashboardState extends State<AdvancedWellnessDashboard> {
     );
   }
 
-  Widget _buildGlobalWellnessScore() {
+  Widget _buildGlobalWellnessScore(WellnessState state) {
     return GlassCard(
       padding: const EdgeInsets.all(24),
       child: Row(
@@ -59,38 +64,39 @@ class _AdvancedWellnessDashboardState extends State<AdvancedWellnessDashboard> {
           CircularPercentIndicator(
             radius: 50.0,
             lineWidth: 10.0,
-            percent: 0.88,
-            center: const Text(
-              '88',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            percent: state.globalScore / 100.0,
+            center: Text(
+              state.globalScore.toInt().toString(),
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
-            progressColor: Colors.cyanAccent,
+            progressColor: _getColorForScore(state.globalScore),
             backgroundColor: Colors.white10,
             circularStrokeCap: CircularStrokeCap.round,
             animation: true,
+            animateFromLastPercent: true,
           ),
           const SizedBox(width: 24),
-          const Expanded(
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                const Text(
                   'Digital Wellness Score',
                   style: TextStyle(fontSize: 14, color: Colors.white70),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(
-                  'Excellent',
+                  _getTextForScore(state.globalScore),
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Colors.greenAccent,
+                    color: _getColorForScore(state.globalScore),
                   ),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Text(
-                  'Your screen habits are very healthy today.',
-                  style: TextStyle(fontSize: 12, color: Colors.white60),
+                  state.recommendation,
+                  style: const TextStyle(fontSize: 12, color: Colors.white60),
                 ),
               ],
             ),
@@ -98,6 +104,18 @@ class _AdvancedWellnessDashboardState extends State<AdvancedWellnessDashboard> {
         ],
       ),
     );
+  }
+
+  Color _getColorForScore(double score) {
+    if (score >= 80) return Colors.greenAccent;
+    if (score >= 50) return Colors.orangeAccent;
+    return Colors.redAccent;
+  }
+
+  String _getTextForScore(double score) {
+    if (score >= 80) return 'Excellent';
+    if (score >= 50) return 'Moderate Risk';
+    return 'Critical Risk';
   }
 
   Widget _buildSensorStatusRow() {
@@ -152,7 +170,7 @@ class _AdvancedWellnessDashboardState extends State<AdvancedWellnessDashboard> {
     );
   }
 
-  Widget _buildLiveMetricsGrid() {
+  Widget _buildLiveMetricsGrid(WellnessState state) {
     return GridView.count(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -161,15 +179,15 @@ class _AdvancedWellnessDashboardState extends State<AdvancedWellnessDashboard> {
       crossAxisSpacing: 16,
       childAspectRatio: 1.3,
       children: [
-        _buildMetricCard('Eye Strain', 'Low', Icons.visibility, Colors.cyan),
+        _buildMetricCard('Eye Strain', '${state.eyeStrainScore.toInt()}%', Icons.visibility, Colors.cyan),
         _buildMetricCard(
           'Posture',
-          'Good',
+          '${state.postureHealth.toInt()}%',
           Icons.accessibility_new,
           Colors.teal,
         ),
-        _buildMetricCard('Focus', '42 min', Icons.timer, Colors.indigoAccent),
-        _buildMetricCard('Hydration', '1.2 L', Icons.water_drop, Colors.blue),
+        _buildMetricCard('Mental Fatigue', '${state.mentalFatigueIndex.toInt()}%', Icons.psychology, Colors.indigoAccent),
+        _buildMetricCard('Active Mode', state.activeMode, Icons.mode, Colors.blue),
       ],
     );
   }

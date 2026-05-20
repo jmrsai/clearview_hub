@@ -23,6 +23,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   screen_brightness_windows
   share_plus
   sodium_libs
+  speech_to_text_windows
   url_launcher_windows
 )
 
