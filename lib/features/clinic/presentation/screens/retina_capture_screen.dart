@@ -1,7 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
-import '../../../../ai_engine/services/oct_report_analyzer_service.dart';
+import '../../../../ai_engine/quantum/superposition_diagnostic_analyzer.dart';
+import '../../../../features/wellness_core/presentation/widgets/quantum_probability_heatmap.dart';
 
 class RetinaCaptureScreen extends StatefulWidget {
   const RetinaCaptureScreen({super.key});
@@ -144,7 +145,7 @@ class _RetinaCaptureScreenState extends State<RetinaCaptureScreen> {
   }
 
   bool _isAnalyzing = false;
-  OctAnalysisReport? _report;
+  QuantumDiagnosticState? _report;
 
   void _showCapturedImage(XFile image) {
     showModalBottomSheet(
@@ -169,34 +170,82 @@ class _RetinaCaptureScreenState extends State<RetinaCaptureScreen> {
                 const SizedBox(height: 16),
                 if (_report == null)
                   Expanded(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: Image.file(
-                        File(image.path),
-                        fit: BoxFit.cover,
-                      ),
+                    child: Stack(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: Image.file(
+                            File(image.path),
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                          ),
+                        ),
+                        if (_isAnalyzing)
+                          const Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                CircularProgressIndicator(color: Colors.purpleAccent),
+                                SizedBox(height: 12),
+                                Text('Calculating Quantum Entanglement...', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                              ],
+                            ),
+                          ),
+                      ],
                     ),
                   ),
                 if (_report != null)
                   Expanded(
                     child: ListView(
                       children: [
-                        _buildStatCard('Diabetic Retinopathy', '${(_report!.diabeticRetinopathyConfidence * 100).toStringAsFixed(1)}%'),
-                        _buildStatCard('Glaucoma Risk', '${(_report!.glaucomaRisk * 100).toStringAsFixed(1)}%'),
-                        _buildStatCard('Macular Degeneration', '${(_report!.macularDegenerationRisk * 100).toStringAsFixed(1)}%'),
-                        const SizedBox(height: 16),
-                        const Text('Detailed Pathology', style: TextStyle(color: Colors.cyan, fontSize: 16)),
-                        const SizedBox(height: 8),
-                        Text(_report!.detailedPathology, style: const TextStyle(color: Colors.white70)),
+                        // The Quantum Heatmap Overlay over the original image
+                        SizedBox(
+                          height: 300,
+                          child: Stack(
+                            fit: StackFit.expand,
+                            children: [
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(20),
+                                child: Image.file(
+                                  File(image.path),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              // Apply Quantum Heatmap
+                              QuantumProbabilityHeatmap(
+                                quantumCorrelations: _report!.quantumCorrelations,
+                              ),
+                            ],
+                          ),
+                        ),
                         const SizedBox(height: 16),
                         Container(
                           padding: const EdgeInsets.all(12),
-                          color: Colors.redAccent.withValues(alpha: 0.2),
-                          child: Text(
-                            'Urgency: ${_report!.urgencyLevel}',
-                            style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold),
+                          color: Colors.purpleAccent.withValues(alpha: 0.2),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Quantum Superposition Collapsed:',
+                                style: TextStyle(color: Colors.purpleAccent, fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                _report!.ultimateDiagnosis,
+                                style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'Confidence: ${(_report!.confidenceLevel * 100).toStringAsFixed(1)}%',
+                                style: const TextStyle(color: Colors.white70),
+                              ),
+                            ],
                           ),
                         ),
+                        const SizedBox(height: 16),
+                        const Text('Probability Wave Distribution', style: TextStyle(color: Colors.cyan, fontSize: 16)),
+                        const SizedBox(height: 8),
+                        ..._report!.quantumCorrelations.entries.map((e) => _buildStatCard(e.key.replaceAll('_', ' ').toUpperCase(), '${(e.value * 100).toStringAsFixed(1)}%')),
                       ],
                     ),
                   ),
@@ -208,8 +257,8 @@ class _RetinaCaptureScreenState extends State<RetinaCaptureScreen> {
                         : () async {
                             setModalState(() => _isAnalyzing = true);
                             try {
-                              final analyzer = OctReportAnalyzerService();
-                              final report = await analyzer.analyzeRetinaScanCloud(File(image.path));
+                              final analyzer = SuperpositionDiagnosticAnalyzer();
+                              final report = await analyzer.collapseSuperpositionState(image.path);
                               setModalState(() {
                                 _report = report;
                                 _isAnalyzing = false;
@@ -220,12 +269,12 @@ class _RetinaCaptureScreenState extends State<RetinaCaptureScreen> {
                             }
                           },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.cyan,
+                      backgroundColor: Colors.purpleAccent,
                       minimumSize: const Size(double.infinity, 50),
                     ),
                     child: _isAnalyzing
                         ? const CircularProgressIndicator(color: Colors.black)
-                        : const Text('RUN HEAVY CLOUD AI', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+                        : const Text('COLLAPSE QUANTUM STATE', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
                   ),
                 if (_report != null)
                   ElevatedButton(
