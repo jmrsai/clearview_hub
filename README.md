@@ -1,89 +1,92 @@
-# ClearView MedOS
+# Clear View Hub
 
-ClearView MedOS is a futuristic, state-of-the-art Medical Operating System designed for comprehensive eye health diagnostics, vision therapy, and general wellness. 
+An AI-driven eye health platform for diagnosis, therapy, and prevention based on WHO PECI 2022 guidelines.
 
-Built with Flutter and powered by a robust Python AI Backend, ClearView MedOS transitions the clinical experience from the hospital to the palm of your hand, ensuring military-grade HIPAA compliance through strictly enforced on-device database encryption and biometric security.
+## 🚀 Step 1: Environment Variables Setup
 
----
-
-## 🌟 Key Features
-
-### 1. Vision Therapy & Eye Gym
-A suite of gamified clinical exercises designed to treat and prevent eye conditions:
-- **MFBF Therapy (Amblyopia)**: Dichoptic red-cyan anaglyph games that force the brain to use both eyes simultaneously, effectively treating "lazy eye" and suppression.
-- **Visual Perception**: Discrimination and visual memory puzzles that scale in difficulty to combat digital eye strain.
-- **Blink Master (Edge AI)**: An on-device AI system that uses the front-facing camera to track blinks in real-time, preventing dry eye syndrome.
-- **Focus Switch**: Near-far accommodative training.
-- **Follow the Dot**: Smooth pursuit and saccadic tracking exercises.
-
-### 2. Clinical Diagnostics
-- **Amsler Grid**: Detect early signs of macular degeneration.
-- **Snellen Chart**: Measure visual acuity.
-- **Ishihara Test**: Check for color blindness.
-- **AI Symptom Checker**: A smart symptom routing system that flags emergency conditions like Acute Glaucoma.
-
-### 3. General Health Expansion
-- **Medi Wiki**: A searchable, real-time index of eye conditions, wellness techniques (like the 20-20-20 rule), and treatments.
-- **AI Health Chatbot**: An NLP-powered medical chatbot connected to the local Python backend, capable of interpreting symptoms and dispensing immediate guidance.
-
-### 4. Enterprise-Grade Security
-- **Biometric Locking**: The entire OS is locked behind a `local_auth` wall, requiring FaceID or Fingerprint to view patient records.
-- **Database Encryption**: All SQLite data is encrypted at rest using AES-256 via `sqflite_sqlcipher` and `flutter_secure_storage`.
-
----
-
-## 🛠️ Tech Stack
-
-- **Frontend Application**: Flutter (Dart)
-- **Local Database**: SQLCipher (Encrypted SQLite)
-- **Edge AI Processing**: Google MLKit (Face/Blink Detection)
-- **Deep Learning Backend**: Python (FastAPI, PyTorch/TensorFlow)
-
----
-
-## 🚀 Setup & Installation
-
-Because ClearView MedOS utilizes a local Python Engine for advanced AI tasks, you must run both the Flutter app and the Python server.
-
-### 1. Start the Python AI Engine
-```bash
-cd python_ai_backend
-pip install -r requirements.txt
-python main.py
-```
-*The server will start locally on `http://localhost:8000`.*
-
-### 2. Run the Flutter App
-Ensure you have a simulator running or a physical device connected.
-```bash
-flutter clean
-flutter pub get
-flutter run
+Create a `.env` file in the root directory (you can copy `.env.example`) and fill in your keys:
+```env
+GEMINI_API_KEY=your_gemini_api_key
+GOOGLE_MAPS_API_KEY=your_google_maps_api_key
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_ANON_KEY=your_supabase_anon_key
 ```
 
----
+## 🔥 Step 2: Firebase Console Setup
 
-## 🔮 Future Aspects & Roadmap
+1. **Create Project**: Go to [Firebase Console](https://console.firebase.google.com/) and create `clear-view-hub`.
+2. **Add Android App**: Register `com.clearviewhub.app`.
+   - Run `cd android && ./gradlew signingReport` to get your SHA-1.
+   - Download `google-services.json` and place it in `android/app/`.
+3. **Deploy Rules & Functions**:
+   ```bash
+   firebase login
+   firebase deploy --only firestore:rules,storage:rules
+   cd functions && npm install && cd ..
+   firebase deploy --only functions
+   ```
+4. **Remote Config**: Add these parameters in the Firebase Console (Remote Config tab):
+   - `clinical_mode_enabled` (Boolean) = `false`
+   - `dr_model_version` (String) = `aidrss_v3_2025`
+   - `who_guidelines_version` (String) = `peci_2022`
+   - `emergency_mode_enabled` (Boolean) = `true`
+5. **Run FlutterFire**:
+   ```bash
+   flutterfire configure --project=clear-view-hub
+   ```
 
-The vision for ClearView MedOS extends far beyond its current capabilities:
+## ⚡ Step 3: Supabase Console Setup
 
-1. **Eye-Gaze Controlled OS (Hardware Integration)**
-   - Integrating deep hardware eye-tracking (similar to Tobii or SpecialEffect's software) so paralyzed or physically disabled users can navigate the entire Flutter application purely via eye gaze.
-2. **Deep Learning Retinal Analysis**
-   - Expanding the Python FastAPI backend to process physical fundus camera images via PyTorch ResNet models, returning Grad-CAM heatmaps showing exact locations of Diabetic Retinopathy or Glaucoma damage.
-3. **EHR / FHIR Synchronization**
-   - Seamlessly syncing the local SQLCipher database to remote hospital servers using the standard HL7 FHIR protocols, allowing ophthalmologists to monitor patient therapy compliance remotely.
-4. **Photoplethysmography (PPG) Vitals**
-   - Using the smartphone camera to detect micro-fluctuations in facial skin color to accurately measure heart rate and blood pressure as part of the General Health Expansion.
+1. **Create Project**: Go to [Supabase](https://supabase.com/) and create `clearviewhub-community`.
+2. **SQL Editor**: Run the following SQL to set up the community tables:
+   ```sql
+   alter table auth.users enable row level security;
 
----
-*Built for the future of decentralized medicine.*
+   create table community_posts (
+     id uuid default gen_random_uuid() primary key,
+     user_id uuid references auth.users not null,
+     user_age int not null,
+     topic text not null,
+     content text not null,
+     likes int default 0,
+     approved boolean default false,
+     created_at timestamp with time zone default now()
+   );
 
-## 📄 License & Legal
+   create policy "Users can read approved posts" on community_posts for select using (approved = true);
+   create policy "Users 13+ can create posts" on community_posts for insert with check (auth.uid() = user_id AND user_age >= 13);
+   create policy "Users update own posts" on community_posts for update using (auth.uid() = user_id);
 
-ClearView Hub is licensed under the **Apache License 2.0**. See the [LICENSE](LICENSE) file for details.
+   alter publication supabase_realtime add table community_posts;
+   ```
 
-For information on contributing, security policies, and our code of conduct, please see:
-- [Contributing Guidelines](CONTRIBUTING.md)
-- [Security Policy](SECURITY.md)
-- [Code of Conduct](CODE_OF_CONDUCT.md)
+## 🤖 Step 4: ML Models
+
+Place your `.tflite` models in the `assets/models/` folder:
+- `external_eye_disease.tflite`
+- `retfound.tflite` (for Body View AI)
+- `glaucoma_cdr.tflite`
+- `dr_model.tflite`
+
+## 📦 Step 5: Android Keystore & Build
+
+1. **Generate Keystore**:
+   ```bash
+   keytool -genkey -v -keystore android/app/clearviewhub-key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias clearviewhub
+   ```
+2. **Configure `key.properties`**: Create `android/key.properties`:
+   ```properties
+   storePassword=YOUR_STRONG_PASS
+   keyPassword=YOUR_STRONG_PASS
+   keyAlias=clearviewhub
+   storeFile=clearviewhub-key.jks
+   ```
+3. **Build Release AAB**:
+   ```bash
+   flutter clean
+   flutter pub get
+   flutter build appbundle --release
+   ```
+
+## ⚠️ Legal Disclaimer
+Keep `clinical_mode_enabled=false` in Remote Config until FDA 510(k) clearance is obtained. App must remain in "Wellness & Education" mode to avoid regulatory issues.

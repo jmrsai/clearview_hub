@@ -1,0 +1,12 @@
+extension StringExtensions on String {
+  String get capitalizeFirst {
+    if (isEmpty) return this;
+    return '${this[0].toUpperCase()}${substring(1).toLowerCase()}';
+  }
+
+  bool get isStrongPassword {
+    return length >= 8 &&
+        contains(RegExp(r'[A-Z]')) &&
+        contains(RegExp(r'[0-9]'));
+  }
+}

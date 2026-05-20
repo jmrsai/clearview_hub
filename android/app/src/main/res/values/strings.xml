@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="accessibility_service_description">Clear View Hub uses this to detect eye-straining apps and apply protective filters.</string>
+</resources>

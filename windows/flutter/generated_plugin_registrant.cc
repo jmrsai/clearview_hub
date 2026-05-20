@@ -6,30 +6,31 @@
 
 #include "generated_plugin_registrant.h"
 
+#include <app_links/app_links_plugin_c_api.h>
 #include <audioplayers_windows/audioplayers_windows_plugin.h>
 #include <battery_plus/battery_plus_windows_plugin.h>
 #include <cloud_firestore/cloud_firestore_plugin_c_api.h>
 #include <connectivity_plus/connectivity_plus_windows_plugin.h>
-#include <face_detection_tflite/face_detection_tflite_plugin.h>
 #include <file_selector_windows/file_selector_windows.h>
-#include <firebase_app_check/firebase_app_check_plugin_c_api.h>
 #include <firebase_auth/firebase_auth_plugin_c_api.h>
 #include <firebase_core/firebase_core_plugin_c_api.h>
-#include <firebase_database/firebase_database_plugin_c_api.h>
-#include <firebase_remote_config/firebase_remote_config_plugin_c_api.h>
-#include <flutter_blue_plus_winrt/flutter_blue_plus_plugin.h>
 #include <flutter_inappwebview_windows/flutter_inappwebview_windows_plugin_c_api.h>
 #include <flutter_secure_storage_windows/flutter_secure_storage_windows_plugin.h>
-#include <flutter_timezone/flutter_timezone_plugin_c_api.h>
 #include <flutter_tts/flutter_tts_plugin.h>
-#include <hand_detection/hand_detection_plugin.h>
+#include <flutter_webrtc/flutter_web_r_t_c_plugin.h>
+#include <geolocator_windows/geolocator_windows.h>
 #include <local_auth_windows/local_auth_plugin.h>
 #include <permission_handler_windows/permission_handler_windows_plugin.h>
 #include <printing/printing_plugin.h>
-#include <speech_to_text_windows/speech_to_text_windows.h>
+#include <record_windows/record_windows_plugin_c_api.h>
+#include <screen_brightness_windows/screen_brightness_windows_plugin.h>
+#include <share_plus/share_plus_windows_plugin_c_api.h>
+#include <sodium_libs/sodium_libs_plugin_c_api.h>
 #include <url_launcher_windows/url_launcher_windows.h>
 
 void RegisterPlugins(flutter::PluginRegistry* registry) {
+  AppLinksPluginCApiRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("AppLinksPluginCApi"));
   AudioplayersWindowsPluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("AudioplayersWindowsPlugin"));
   BatteryPlusWindowsPluginRegisterWithRegistrar(
@@ -38,40 +39,36 @@ void RegisterPlugins(flutter::PluginRegistry* registry) {
       registry->GetRegistrarForPlugin("CloudFirestorePluginCApi"));
   ConnectivityPlusWindowsPluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("ConnectivityPlusWindowsPlugin"));
-  FaceDetectionTflitePluginRegisterWithRegistrar(
-      registry->GetRegistrarForPlugin("FaceDetectionTflitePlugin"));
   FileSelectorWindowsRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("FileSelectorWindows"));
-  FirebaseAppCheckPluginCApiRegisterWithRegistrar(
-      registry->GetRegistrarForPlugin("FirebaseAppCheckPluginCApi"));
   FirebaseAuthPluginCApiRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("FirebaseAuthPluginCApi"));
   FirebaseCorePluginCApiRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("FirebaseCorePluginCApi"));
-  FirebaseDatabasePluginCApiRegisterWithRegistrar(
-      registry->GetRegistrarForPlugin("FirebaseDatabasePluginCApi"));
-  FirebaseRemoteConfigPluginCApiRegisterWithRegistrar(
-      registry->GetRegistrarForPlugin("FirebaseRemoteConfigPluginCApi"));
-  FlutterBluePlusPluginRegisterWithRegistrar(
-      registry->GetRegistrarForPlugin("FlutterBluePlusPlugin"));
   FlutterInappwebviewWindowsPluginCApiRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("FlutterInappwebviewWindowsPluginCApi"));
   FlutterSecureStorageWindowsPluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("FlutterSecureStorageWindowsPlugin"));
-  FlutterTimezonePluginCApiRegisterWithRegistrar(
-      registry->GetRegistrarForPlugin("FlutterTimezonePluginCApi"));
   FlutterTtsPluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("FlutterTtsPlugin"));
-  HandDetectionPluginRegisterWithRegistrar(
-      registry->GetRegistrarForPlugin("HandDetectionPlugin"));
+  FlutterWebRTCPluginRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("FlutterWebRTCPlugin"));
+  GeolocatorWindowsRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("GeolocatorWindows"));
   LocalAuthPluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("LocalAuthPlugin"));
   PermissionHandlerWindowsPluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("PermissionHandlerWindowsPlugin"));
   PrintingPluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("PrintingPlugin"));
-  SpeechToTextWindowsRegisterWithRegistrar(
-      registry->GetRegistrarForPlugin("SpeechToTextWindows"));
+  RecordWindowsPluginCApiRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("RecordWindowsPluginCApi"));
+  ScreenBrightnessWindowsPluginRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("ScreenBrightnessWindowsPlugin"));
+  SharePlusWindowsPluginCApiRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("SharePlusWindowsPluginCApi"));
+  SodiumLibsPluginCApiRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("SodiumLibsPluginCApi"));
   UrlLauncherWindowsRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("UrlLauncherWindows"));
 }

@@ -23,4 +23,3 @@ The following skills are available in the `skills/` directory to automate UI imp
 
 - **[UI Implementation](skills/ui_implementation.md)**: Converts Stitch designs to Flutter components using GoRouter and Riverpod.
 - **[Documentation Generation](skills/docs_generation.md)**: Automatically updates `DESIGN.md` and `ARCH.md` based on code changes.
-1

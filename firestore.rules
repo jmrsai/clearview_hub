@@ -1,0 +1,23 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    match /screening_results/{resultId} {
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      allow read: if request.auth != null && resource.data.userId == request.auth.uid;
+      allow update, delete: if false;
+    }
+    match /emergencies/{emergencyId} {
+      allow create: if request.auth != null;
+      allow read: if request.auth != null && resource.data.userId == request.auth.uid;
+    }
+    match /home_remedies/{diseaseId} {
+      allow read: if true; allow write: if false;
+    }
+    match /optiLab_reports/{reportId} {
+      allow create, read: if request.auth != null && request.resource.data.userId == request.auth.uid;
+    }
+  }
+}

@@ -1,0 +1,8 @@
+chalazion
+pterygium
+conjunctivitis
+corneal_ulcer
+stye
+blepharitis
+normal
+other

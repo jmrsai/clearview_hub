@@ -4,17 +4,17 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   audioplayers_linux
-  face_detection_tflite
   file_selector_linux
   flutter_secure_storage_linux
-  flutter_timezone
-  hand_detection
+  flutter_webrtc
+  gtk
   printing
+  record_linux
+  sodium_libs
   url_launcher_linux
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST
-  flutter_litert
   jni
   tflite_flutter
 )

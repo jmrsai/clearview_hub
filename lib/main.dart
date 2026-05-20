@@ -1,162 +1,127 @@
-/*
- * Copyright 2026 ClearView Hub Contributors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'dart:ui';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:firebase_core/firebase_core.dart' hide FirebaseService;
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:firebase_app_check/firebase_app_check.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'firebase_options.dart';
-import 'core/config/app_config.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+import 'core/database/database_service.dart';
+import 'core/providers/database_provider.dart';
+import 'routes/app_router.dart';
 import 'core/theme/app_theme.dart';
-import 'core/database/database_helper.dart';
-import 'features/auth/login_screen.dart';
-import 'features/auth/biometric_auth_screen.dart';
-import 'features/dashboard/dashboard_screen.dart';
-import 'core/services/ehr_sync_service.dart';
-import 'core/services/theme_service.dart';
-import 'core/services/auth_service.dart';
-import 'core/services/translator_service.dart';
-import 'core/services/firebase_service.dart';
-import 'core/services/connectivity_service.dart';
-import 'core/services/wellness_service.dart';
-import 'core/services/gemini_service.dart';
-import 'core/services/global_error_handler.dart';
+import 'package:clearview_hub/features/vision_safety/presentation/widgets/eye_strain_overlay.dart';
+import 'core/security/app_integrity_service.dart';
+
+// New Architecture Imports
+import 'encrypted_chat/encrypted_chat_service.dart';
+import 'realtime/realtime_sync_engine.dart';
+import 'optimization/performance_optimizer.dart';
+import 'adaptive_ui/adaptive_ui_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // ── Step 1: Load environment variables (API keys, config) ──────────────────
-  // MUST be first so all services can access config via AppConfig.*
-  await AppConfig.initialize();
+  // --- SECURITY: DEVICE INTEGRITY CHECK ---
+  final integrityService = AppIntegrityService();
+  final isDeviceSecure = await integrityService.verifyDeviceIntegrity();
 
-  // ── Step 2: System UI configuration ───────────────────────────────────────
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
-
-  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    statusBarColor: Colors.transparent,
-    statusBarIconBrightness: Brightness.light,
-    systemNavigationBarColor: Color(0xFF0A0E1A),
-    systemNavigationBarIconBrightness: Brightness.light,
-  ));
-
-  // ── Initialize Auto-Healing Service ───────────────────────────────────────
-  GlobalErrorHandler().initialize();
-
-  // ── Step 3: Firebase initialization ───────────────────────────────────────
-  try {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-
-    // Route all uncaught Flutter framework errors → Crashlytics
-    final originalFlutterError = FlutterError.onError;
-    FlutterError.onError = (errorDetails) {
-      FirebaseCrashlytics.instance.recordFlutterFatalError(errorDetails);
-      if (originalFlutterError != null) originalFlutterError(errorDetails);
-    };
-
-    // Route all uncaught async errors → Crashlytics
-    final originalPlatformError = PlatformDispatcher.instance.onError;
-    PlatformDispatcher.instance.onError = (error, stack) {
-      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-      if (originalPlatformError != null) {
-        return originalPlatformError(error, stack);
-      }
-      return true;
-    };
-
-    // Advanced Firebase services (Push, Remote Config, Analytics)
-    await FirebaseService.instance.init();
-
-    // App Check — prevents unauthorized API use
-    // Use debug provider in debug mode, play integrity in release
-    await FirebaseAppCheck.instance.activate(
-      // ignore: deprecated_member_use
-      androidProvider: AndroidProvider.debug,
-      // ignore: deprecated_member_use
-      appleProvider: AppleProvider.debug,
-    );
-
-    // Language preference
-    await TranslatorService.instance.initialize();
-  } catch (e) {
-    debugPrint('[main] Firebase initialization error: $e');
+  if (!isDeviceSecure) {
+    // Fail Securely: Do not initialize Supabase or load local databases
+    // if the device is rooted, jailbroken, or running in an emulator.
+    runApp(const SecurityBlockedApp());
+    return;
   }
 
-  // ── Step 4: Local services ─────────────────────────────────────────────────
-  final prefs = await SharedPreferences.getInstance();
-  final themeService = ThemeService(prefs);
+  // Initialize Supabase (Clinical Data & Auth)
+  await Supabase.initialize(
+    url: 'https://pqtpojzebxrysqbjsvmp.supabase.co',
+    anonKey: 'sb_publishable_KSNrdVNOtET45vdMpnJvQQ_CRZVvMwB',
+  );
 
-  // Initialize encrypted local database
-  await DatabaseHelper.instance.database;
+  // Initialize Offline DB
+  await Hive.initFlutter();
 
-  // Authentication session
-  await AuthService.instance.init();
+  // Initialize Encrypted Storage and Models
+  final dbService = DatabaseService();
+  await dbService.init();
 
-  // Connectivity monitoring (offline-first)
-  await ConnectivityService.instance.initialize();
+  // Initialize New Architecture Engines
+  final encryptedChatService = EncryptedChatService();
+  await encryptedChatService.init();
 
-  // Digital eye wellness tracking
-  await WellnessService.instance.initialize();
+  final realtimeSyncEngine = RealtimeSyncEngine();
+  await realtimeSyncEngine.init();
 
-  // Initialize AI service (non-blocking — gracefully disabled if no key)
-  GeminiService.instance.initialize();
+  final performanceOptimizer = PerformanceOptimizer();
+  await performanceOptimizer.init();
 
-  // Background EHR sync
-  EhrSyncService.instance.start();
-
-  runApp(ClearViewApp(themeService: themeService));
+  runApp(
+    ProviderScope(
+      overrides: [
+        databaseServiceProvider.overrideWithValue(dbService),
+        encryptedChatServiceProvider.overrideWithValue(encryptedChatService),
+        realtimeSyncEngineProvider.overrideWithValue(realtimeSyncEngine),
+        performanceOptimizerProvider.overrideWithValue(performanceOptimizer),
+      ],
+      child: const EyeVerseApp(),
+    ),
+  );
 }
 
-class ClearViewApp extends StatelessWidget {
-  final ThemeService themeService;
-
-  const ClearViewApp({super.key, required this.themeService});
+class SecurityBlockedApp extends StatelessWidget {
+  const SecurityBlockedApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ScreenUtilInit(
-      designSize: const Size(390, 844), // iPhone 13/14/15 Pro standard
-      minTextAdapt: true,
-      splitScreenMode: true,
+    return const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        backgroundColor: Colors.black,
+        body: Center(
+          child: Padding(
+            padding: EdgeInsets.all(32.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.gpp_bad, color: Colors.redAccent, size: 80),
+                SizedBox(height: 24),
+                Text(
+                  'Security Violation Detected',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 16),
+                Text(
+                  'EyeVerse AI cannot run on a compromised, rooted, or emulated device to protect sensitive medical data.',
+                  style: TextStyle(fontSize: 16, color: Colors.white70),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class EyeVerseApp extends ConsumerWidget {
+  const EyeVerseApp({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final router = ref.watch(routerProvider);
+    final themeMode = ref.watch(themeProvider);
+    final isDyslexiaMode = ref.watch(dyslexiaModeProvider);
+
+    return MaterialApp.router(
+      title: 'EyeVerse AI',
+      theme: AppTheme.darkTheme, // Light theme can be added later
+      darkTheme: isDyslexiaMode ? AppTheme.dyslexiaDarkTheme : AppTheme.darkTheme,
+      themeMode: themeMode,
+      routerConfig: router,
+      debugShowCheckedModeBanner: false,
       builder: (context, child) {
-        return ListenableBuilder(
-          listenable: Listenable.merge([AuthService.instance, themeService]),
-          builder: (context, _) {
-            return MaterialApp(
-              title: AppConfig.appName,
-              debugShowCheckedModeBanner: false,
-              theme: AppTheme.light,
-              darkTheme: AppTheme.dark,
-              themeMode: themeService.themeMode,
-              initialRoute: AuthService.instance.isAuthenticated ? '/auth' : '/login',
-              routes: {
-                '/login': (_) => const LoginScreen(),
-                '/auth':  (_) => const BiometricAuthScreen(),
-                '/home':  (_) => const DashboardScreen(),
-              },
-            );
-          },
+        return EyeStrainOverlay(
+          child: child ?? const SizedBox.shrink(),
         );
       },
     );

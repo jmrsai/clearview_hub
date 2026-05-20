@@ -3,33 +3,30 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  app_links
   audioplayers_windows
   battery_plus
   cloud_firestore
   connectivity_plus
-  face_detection_tflite
   file_selector_windows
-  firebase_app_check
   firebase_auth
   firebase_core
-  firebase_database
-  firebase_remote_config
-  flutter_blue_plus_winrt
   flutter_inappwebview_windows
   flutter_secure_storage_windows
-  flutter_timezone
   flutter_tts
-  hand_detection
+  flutter_webrtc
+  geolocator_windows
   local_auth_windows
   permission_handler_windows
   printing
-  speech_to_text_windows
+  record_windows
+  screen_brightness_windows
+  share_plus
+  sodium_libs
   url_launcher_windows
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST
-  flutter_litert
-  flutter_local_notifications_windows
   jni
   tflite_flutter
 )

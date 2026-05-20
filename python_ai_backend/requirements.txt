@@ -1,9 +1,0 @@
-fastapi==0.109.2
-uvicorn==0.27.1
-python-multipart==0.0.9
-tensorflow==2.15.0
-opencv-python-headless==4.9.0.80
-transformers==4.37.2
-torch==2.2.0
-Pillow==10.2.0
-firebase-admin==6.4.0

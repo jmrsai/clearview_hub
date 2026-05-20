@@ -1,86 +1,42 @@
-/*
- * Copyright 2026 ClearView Hub Contributors
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 import 'package:flutter/material.dart';
 
-/// ClearView Hub — Glassmorphic Medical Color System
+/// Design Tokens for EyeVerse AI.
+/// These colors are chosen to be calm, highly accessible (WCAG compliant),
+/// and optimized for users with visual impairments.
 class AppColors {
-  AppColors._();
+  // Primary (Calm Blue - Medical Trust)
+  static const Color primary = Color(0xFF0F3460);
+  static const Color primaryLight = Color(0xFF1A457B);
+  static const Color primaryDark = Color(0xFF081C36);
 
-  // ── Dark Mode Background ──────────────────────────────────────────────────
-  static const Color bgDeep    = Color(0xFF030509); // Ultra-deep OLED black
-  static const Color bgCard    = Color(0xFF0B111E); // Very subtle dark blue/grey
-  static const Color bgSurface = Color(0xFF101728);
+  // Secondary (Teal - Tech/AI feel)
+  static const Color secondary = Color(0xFF00ADB5);
+  static const Color secondaryLight = Color(0xFF33BDC3);
+  static const Color secondaryDark = Color(0xFF00797F);
+  static const Color accent = Color(0xFF00E5FF); // Electric Cyan
 
-  // ── Light Mode Background ─────────────────────────────────────────────────
-  static const Color bgLight      = Color(0xFFF8FAFC);
-  static const Color bgLightCard  = Colors.white;
-  static const Color bgLightAlt   = Color(0xFFF1F5F9);
 
-  // ── Brand (Premium Neon) ──────────────────────────────────────────────────
-  static const Color cyan      = Color(0xFF00F0FF); // Cyber neon cyan
-  static const Color cyanDim   = Color(0x2200F0FF);
-  static const Color cyanDeep  = Color(0xFF003882);
-  static const Color violet    = Color(0xFFB026FF); // Neon violet
-  static const Color violetDim = Color(0x22B026FF);
-  static const Color teal      = Color(0xFF00E6A5);
+  // Backgrounds (Dark Mode First - reduces eye strain)
+  static const Color backgroundDark = Color(0xFF0A0E1A);
+  static const Color surfaceDark = Color(0xFF151B2B);
+  static const Color surfaceElevated = Color(0xFF1E2638);
 
-  // ── Semantic ────────────────────────────────────────────────────────────────
-  static const Color success   = Color(0xFF10B981);
-  static const Color warning   = Color(0xFFF59E0B);
-  static const Color error     = Color(0xFFF43F5E);
-  static const Color info      = Color(0xFF3B82F6);
+  // Text Colors (High Contrast)
+  static const Color textPrimary = Color(0xFFFFFFFF);
+  static const Color textSecondary = Color(0xFFB0B3B8);
+  static const Color textDisabled = Color(0xFF757575);
 
-  // ── Dark Mode Text ─────────────────────────────────────────────────────────
-  static const Color textPrimary   = Color(0xFFE2E8F0);
-  static const Color textSecondary = Color(0xFF94A3B8);
-  static const Color textHint      = Color(0xFF475569);
+  // Semantic / Feedback
+  static const Color error = Color(0xFFFF4C4C); // WCAG AAA compliant red on dark
+  static const Color success = Color(0xFF00C853);
+  static const Color warning = Color(0xFFFFD600);
+  static const Color info = Color(0xFF29B6F6);
 
-  // ── Light Mode Text ────────────────────────────────────────────────────────
-  static const Color textLightPrimary   = Color(0xFF0F172A);
-  static const Color textLightSecondary = Color(0xFF475569);
-  static const Color textLightHint      = Color(0xFF94A3B8);
+  // Accessibility Color Blindness Modes (Protanopia/Deuteranopia friendly palette)
+  static const Color colorBlindSafePrimary = Color(0xFF0072B2);
+  static const Color colorBlindSafeSecondary = Color(0xFFD55E00);
 
-  // ── Glass (Ultra-subtle) ──────────────────────────────────────────────────
-  static const Color glassFill   = Color(0x0AFFFFFF); // Barely there fill
-  static const Color glassBorder = Color(0x1AFFFFFF); // Sharp, thin border
-  static const Color glassHighlight = Color(0x05FFFFFF);
-
-  // ── Gradients ───────────────────────────────────────────────────────────────
-  static const LinearGradient primaryGradient = LinearGradient(
-    colors: [Color(0xFF003882), Color(0xFF00F0FF)],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-  );
-
-  static const LinearGradient cardGradient = LinearGradient(
-    colors: [Color(0xFF0B111E), Color(0xFF101728)],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-  );
-
-  static const LinearGradient successGradient = LinearGradient(
-    colors: [Color(0xFF064E3B), Color(0xFF10B981)],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-  );
-
-  static const LinearGradient warningGradient = LinearGradient(
-    colors: [Color(0xFF78350F), Color(0xFFF59E0B)],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-  );
+  // Glassmorphism effects
+  static const Color glassBackground = Color(0x1AFFFFFF);
+  static const Color glassBorder = Color(0x33FFFFFF);
 }
