@@ -243,9 +243,39 @@ class _RetinaCaptureScreenState extends State<RetinaCaptureScreen> {
                           ),
                         ),
                         const SizedBox(height: 16),
+                        const SizedBox(height: 16),
                         const Text('Probability Wave Distribution', style: TextStyle(color: Colors.cyan, fontSize: 16)),
                         const SizedBox(height: 8),
                         ..._report!.quantumCorrelations.entries.map((e) => _buildStatCard(e.key.replaceAll('_', ' ').toUpperCase(), '${(e.value * 100).toStringAsFixed(1)}%')),
+                        const SizedBox(height: 16),
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Colors.black45,
+                            border: Border.all(color: Colors.amberAccent),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Row(
+                                children: [
+                                  Icon(Icons.timeline, color: Colors.amberAccent, size: 20),
+                                  SizedBox(width: 8),
+                                  Text('Early Warning Horizon', style: TextStyle(color: Colors.amberAccent, fontWeight: FontWeight.bold)),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              Text(_report!.earlyWarningHorizon, style: const TextStyle(color: Colors.white70)),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Powered by Nano-Swarm: ${_report!.algorithmVersion}',
+                          style: const TextStyle(color: Colors.white38, fontSize: 12, fontStyle: FontStyle.italic),
+                          textAlign: TextAlign.center,
+                        ),
                       ],
                     ),
                   ),
