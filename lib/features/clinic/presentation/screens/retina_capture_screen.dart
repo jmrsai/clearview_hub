@@ -1,5 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import '../../../../ai_engine/services/oct_report_analyzer_service.dart';
 
 class RetinaCaptureScreen extends StatefulWidget {
   const RetinaCaptureScreen({super.key});
@@ -141,47 +143,117 @@ class _RetinaCaptureScreenState extends State<RetinaCaptureScreen> {
     );
   }
 
+  bool _isAnalyzing = false;
+  OctAnalysisReport? _report;
+
   void _showCapturedImage(XFile image) {
     showModalBottomSheet(
       context: context,
       backgroundColor: const Color(0xFF0A0E1A),
       isScrollControlled: true,
-      builder: (context) => Container(
-        height: MediaQuery.of(context).size.height * 0.8,
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          children: [
-            const Text(
-              'Capture Preview',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+      builder: (context) => StatefulBuilder(
+        builder: (context, setModalState) {
+          return Container(
+            height: MediaQuery.of(context).size.height * 0.9,
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              children: [
+                Text(
+                  _report == null ? 'Capture Preview' : 'Diagnostic Report',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                if (_report == null)
+                  Expanded(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: Image.file(
+                        File(image.path),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                if (_report != null)
+                  Expanded(
+                    child: ListView(
+                      children: [
+                        _buildStatCard('Diabetic Retinopathy', '${(_report!.diabeticRetinopathyConfidence * 100).toStringAsFixed(1)}%'),
+                        _buildStatCard('Glaucoma Risk', '${(_report!.glaucomaRisk * 100).toStringAsFixed(1)}%'),
+                        _buildStatCard('Macular Degeneration', '${(_report!.macularDegenerationRisk * 100).toStringAsFixed(1)}%'),
+                        const SizedBox(height: 16),
+                        const Text('Detailed Pathology', style: TextStyle(color: Colors.cyan, fontSize: 16)),
+                        const SizedBox(height: 8),
+                        Text(_report!.detailedPathology, style: const TextStyle(color: Colors.white70)),
+                        const SizedBox(height: 16),
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          color: Colors.redAccent.withValues(alpha: 0.2),
+                          child: Text(
+                            'Urgency: ${_report!.urgencyLevel}',
+                            style: const TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                const SizedBox(height: 24),
+                if (_report == null)
+                  ElevatedButton(
+                    onPressed: _isAnalyzing
+                        ? null
+                        : () async {
+                            setModalState(() => _isAnalyzing = true);
+                            try {
+                              final analyzer = OctReportAnalyzerService();
+                              final report = await analyzer.analyzeRetinaScanCloud(File(image.path));
+                              setModalState(() {
+                                _report = report;
+                                _isAnalyzing = false;
+                              });
+                            } catch (e) {
+                              setModalState(() => _isAnalyzing = false);
+                              debugPrint("Error: $e");
+                            }
+                          },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.cyan,
+                      minimumSize: const Size(double.infinity, 50),
+                    ),
+                    child: _isAnalyzing
+                        ? const CircularProgressIndicator(color: Colors.black)
+                        : const Text('RUN HEAVY CLOUD AI', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+                  ),
+                if (_report != null)
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context); // Close modal
+                      Navigator.pop(context); // Close camera
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.cyan,
+                      minimumSize: const Size(double.infinity, 50),
+                    ),
+                    child: const Text('Consult Doctor / Exit', style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+                  ),
+              ],
             ),
-            const SizedBox(height: 24),
-            Expanded(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: Image.network(
-                  image.path,
-                  fit: BoxFit.cover,
-                ), // path is local file path
-              ),
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: () {
-                // Trigger AI analysis
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.cyan,
-                minimumSize: const Size(double.infinity, 50),
-              ),
-              child: const Text('RUN AI SCREENING'),
-            ),
-          ],
-        ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildStatCard(String title, String value) {
+    return Card(
+      color: Colors.black54,
+      margin: const EdgeInsets.symmetric(vertical: 4),
+      child: ListTile(
+        title: Text(title, style: const TextStyle(color: Colors.white)),
+        trailing: Text(value, style: const TextStyle(color: Colors.cyanAccent, fontWeight: FontWeight.bold, fontSize: 16)),
       ),
     );
   }

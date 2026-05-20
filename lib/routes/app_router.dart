@@ -97,6 +97,12 @@ import 'package:clearview_hub/features/reels/presentation/screens/wellness_reels
 import 'package:clearview_hub/features/e_commerce/presentation/screens/virtual_try_on_screen.dart';
 import 'package:clearview_hub/features/telemedicine/presentation/screens/teleophthalmology_call_screen.dart';
 
+// Medical Compliance & Reports
+import 'package:clearview_hub/core/compliance/presentation/screens/medical_consent_screen.dart';
+import 'package:clearview_hub/features/wellness_core/presentation/screens/clinical_report_screen.dart';
+import 'package:clearview_hub/features/wellness_core/presentation/screens/medication_tracker_screen.dart';
+import 'package:clearview_hub/features/vision_safety/presentation/screens/surface_eye_scan_screen.dart';
+
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -107,6 +113,7 @@ final routerProvider = Provider<GoRouter>((ref) {
     navigatorKey: _rootNavigatorKey,
     initialLocation: '/splash',
     redirect: (context, state) {
+      final isAuth = ref.watch(authStateProvider).value != null;
       final loggingIn = state.uri.path == '/login' || state.uri.path == '/register';
       final onboarding = state.uri.path == '/splash' || state.uri.path == '/onboarding';
 
@@ -134,6 +141,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const BiometricLockScreen(),
       ),
 
+
+      GoRoute(
+        path: '/medical_consent',
+        builder: (context, state) => const MedicalConsentScreen(),
+      ),
 
       ShellRoute(
         navigatorKey: _shellNavigatorKey,
@@ -188,6 +200,11 @@ final routerProvider = Provider<GoRouter>((ref) {
                       final scanType = state.extra as String? ?? 'General';
                       return AIEyeScannerScreen(scanType: scanType);
                     },
+                  ),
+                  GoRoute(
+                    path: 'surface_scan',
+                    name: 'surface_scan',
+                    builder: (context, state) => const SurfaceEyeScanScreen(),
                   ),
                 ],
               ),
@@ -340,6 +357,16 @@ final routerProvider = Provider<GoRouter>((ref) {
                 path: 'teleophthalmology',
                 name: 'teleophthalmology',
                 builder: (context, state) => const TeleophthalmologyCallScreen(doctorName: 'Dr. Sarah Wilson'),
+              ),
+              GoRoute(
+                path: 'clinical_report',
+                name: 'clinical_report',
+                builder: (context, state) => const ClinicalReportScreen(),
+              ),
+              GoRoute(
+                path: 'medication_tracker',
+                name: 'medication_tracker',
+                builder: (context, state) => const MedicationTrackerScreen(),
               ),
             ],
           ),

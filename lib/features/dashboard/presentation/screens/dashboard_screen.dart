@@ -632,6 +632,38 @@ class _DashboardScreenState extends State<DashboardScreen> {
               Colors.redAccent,
               '/biometric_lock',
             ),
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            _buildWideAction(
+              context,
+              'Clinical Report',
+              Icons.summarize,
+              Colors.blueAccent,
+              '/clinical_report',
+            ),
+            const SizedBox(width: 12),
+            _buildWideAction(
+              context,
+              'Surface Scan (Infection)',
+              Icons.camera_front,
+              Colors.greenAccent,
+              '/eye_scanner/surface_scan',
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            _buildWideAction(
+              context,
+              'Eye Drops',
+              Icons.water_drop,
+              Colors.cyanAccent,
+              '/medication_tracker',
+            ),
+            const Spacer(),
           ],
         ),
       ],
