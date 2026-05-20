@@ -594,6 +594,46 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
           ],
         ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            _buildWideAction(
+              context,
+              'Wellness Reels',
+              Icons.video_collection,
+              Colors.purpleAccent,
+              '/wellness_reels',
+            ),
+            const SizedBox(width: 12),
+            _buildWideAction(
+              context,
+              'AR Try-On',
+              Icons.face,
+              Colors.tealAccent,
+              '/virtual_try_on',
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            _buildWideAction(
+              context,
+              'Teleophthalmology',
+              Icons.video_camera_front,
+              Colors.lightBlueAccent,
+              '/teleophthalmology',
+            ),
+            const SizedBox(width: 12),
+            _buildWideAction(
+              context,
+              'App Lock',
+              Icons.fingerprint,
+              Colors.redAccent,
+              '/biometric_lock',
+            ),
+          ],
+        ),
       ],
     );
   }

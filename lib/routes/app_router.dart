@@ -91,6 +91,12 @@ import 'package:clearview_hub/features/vision_tests/presentation/screens/symptom
 import 'package:clearview_hub/features/assistive_tools/presentation/screens/magnifier_screen.dart';
 import 'package:clearview_hub/features/assistive_tools/presentation/screens/color_identifier_screen.dart';
 
+// Global Social Network Advancements
+import 'package:clearview_hub/features/auth/presentation/screens/biometric_lock_screen.dart';
+import 'package:clearview_hub/features/reels/presentation/screens/wellness_reels_feed_screen.dart';
+import 'package:clearview_hub/features/e_commerce/presentation/screens/virtual_try_on_screen.dart';
+import 'package:clearview_hub/features/telemedicine/presentation/screens/teleophthalmology_call_screen.dart';
+
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -123,6 +129,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/register',
         builder: (context, state) => const RegisterScreen(),
       ),
+      GoRoute(
+        path: '/biometric_lock',
+        builder: (context, state) => const BiometricLockScreen(),
+      ),
+
 
       ShellRoute(
         navigatorKey: _shellNavigatorKey,
@@ -315,8 +326,24 @@ final routerProvider = Provider<GoRouter>((ref) {
                 name: 'color_identifier',
                 builder: (context, state) => const ColorIdentifierScreen(),
               ),
+              GoRoute(
+                path: 'wellness_reels',
+                name: 'wellness_reels',
+                builder: (context, state) => const WellnessReelsFeedScreen(),
+              ),
+              GoRoute(
+                path: 'virtual_try_on',
+                name: 'virtual_try_on',
+                builder: (context, state) => const VirtualTryOnScreen(),
+              ),
+              GoRoute(
+                path: 'teleophthalmology',
+                name: 'teleophthalmology',
+                builder: (context, state) => const TeleophthalmologyCallScreen(doctorName: 'Dr. Sarah Wilson'),
+              ),
             ],
           ),
+
 
           GoRoute(
             path: '/vision_lab',
