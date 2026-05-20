@@ -77,6 +77,20 @@ import 'package:clearview_hub/features/medications/presentation/screens/medicati
 import 'package:clearview_hub/features/symptom_checker/presentation/screens/symptom_checker_screen.dart';
 import 'package:clearview_hub/features/supabase_test/presentation/screens/supabase_test_screen.dart';
 
+// Multi-Age Ecosystem
+import 'package:clearview_hub/tests/presentation/screens/digital_addiction_test_screen.dart';
+import 'package:clearview_hub/therapy/presentation/screens/guided_meditation_therapy.dart';
+import 'package:clearview_hub/games/presentation/screens/blink_speed_game.dart';
+import 'package:clearview_hub/exercises/presentation/screens/palming_exercise_screen.dart';
+
+// Ultimate Advancements
+import 'package:clearview_hub/features/education/presentation/screens/home_remedies_screen.dart';
+import 'package:clearview_hub/features/education/presentation/screens/eye_encyclopedia_screen.dart';
+import 'package:clearview_hub/features/vision_tests/presentation/screens/dry_eye_questionnaire_screen.dart';
+import 'package:clearview_hub/features/vision_tests/presentation/screens/symptom_triage_screen.dart';
+import 'package:clearview_hub/features/assistive_tools/presentation/screens/magnifier_screen.dart';
+import 'package:clearview_hub/features/assistive_tools/presentation/screens/color_identifier_screen.dart';
+
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
 
@@ -250,6 +264,56 @@ final routerProvider = Provider<GoRouter>((ref) {
                 path: 'entrepreneur',
                 name: 'entrepreneur',
                 builder: (context, state) => const EntrepreneurDashboard(),
+              ),
+              GoRoute(
+                path: 'digital_addiction_test',
+                name: 'digital_addiction_test',
+                builder: (context, state) => const DigitalAddictionTestScreen(),
+              ),
+              GoRoute(
+                path: 'guided_meditation',
+                name: 'guided_meditation',
+                builder: (context, state) => const GuidedMeditationTherapyScreen(),
+              ),
+              GoRoute(
+                path: 'blink_speed_game',
+                name: 'blink_speed_game',
+                builder: (context, state) => const BlinkSpeedGameScreen(),
+              ),
+              GoRoute(
+                path: 'palming_exercise',
+                name: 'palming_exercise',
+                builder: (context, state) => const PalmingExerciseScreen(),
+              ),
+              GoRoute(
+                path: 'home_remedies',
+                name: 'home_remedies',
+                builder: (context, state) => const HomeRemediesScreen(),
+              ),
+              GoRoute(
+                path: 'eye_encyclopedia',
+                name: 'eye_encyclopedia',
+                builder: (context, state) => const EyeEncyclopediaScreen(),
+              ),
+              GoRoute(
+                path: 'dry_eye_test',
+                name: 'dry_eye_test',
+                builder: (context, state) => const DryEyeQuestionnaireScreen(),
+              ),
+              GoRoute(
+                path: 'symptom_triage',
+                name: 'symptom_triage',
+                builder: (context, state) => const SymptomTriageScreen(),
+              ),
+              GoRoute(
+                path: 'magnifier',
+                name: 'magnifier',
+                builder: (context, state) => const MagnifierScreen(),
+              ),
+              GoRoute(
+                path: 'color_identifier',
+                name: 'color_identifier',
+                builder: (context, state) => const ColorIdentifierScreen(),
               ),
             ],
           ),

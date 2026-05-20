@@ -459,6 +459,106 @@ class _DashboardScreenState extends State<DashboardScreen> {
           children: [
             _buildWideAction(
               context,
+              'Triage',
+              Icons.healing,
+              Colors.redAccent,
+              '/symptom_triage',
+            ),
+            const SizedBox(width: 12),
+            _buildWideAction(
+              context,
+              'Home Remedies',
+              Icons.spa,
+              Colors.greenAccent,
+              '/home_remedies',
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            _buildWideAction(
+              context,
+              'Dry Eye Test',
+              Icons.opacity,
+              Colors.blueAccent,
+              '/dry_eye_test',
+            ),
+            const SizedBox(width: 12),
+            _buildWideAction(
+              context,
+              'Encyclopedia',
+              Icons.menu_book,
+              Colors.amberAccent,
+              '/eye_encyclopedia',
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            _buildWideAction(
+              context,
+              'Magnifier',
+              Icons.search,
+              Colors.cyanAccent,
+              '/magnifier',
+            ),
+            const SizedBox(width: 12),
+            _buildWideAction(
+              context,
+              'Color ID',
+              Icons.color_lens,
+              Colors.purpleAccent,
+              '/color_identifier',
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            _buildWideAction(
+              context,
+              'Addiction Test',
+              Icons.assessment,
+              Colors.redAccent,
+              '/digital_addiction_test',
+            ),
+            const SizedBox(width: 12),
+            _buildWideAction(
+              context,
+              'Meditation',
+              Icons.self_improvement,
+              Colors.cyanAccent,
+              '/guided_meditation',
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            _buildWideAction(
+              context,
+              'Blink Game',
+              Icons.remove_red_eye,
+              Colors.lightGreenAccent,
+              '/blink_speed_game',
+            ),
+            const SizedBox(width: 12),
+            _buildWideAction(
+              context,
+              'Palming',
+              Icons.pan_tool,
+              Colors.orangeAccent,
+              '/palming_exercise',
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            _buildWideAction(
+              context,
               'Travel Wellness',
               Icons.directions_car,
               Colors.cyan,
